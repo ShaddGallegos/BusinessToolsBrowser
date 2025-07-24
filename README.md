@@ -1,231 +1,230 @@
-# Business Tools Browser
+# Enhanced Business Tools Browser
 
-A comprehensive, unified application for browsing, searching, and managing business tools databases. This application combines data processing, GUI interface, and CLI functionality into a single, easy-to-install package.
+A comprehensive tool for processing, validating, and browsing business tools data from multiple file formats.
 
 ## Features
 
-### [INFO] Unified Application
-- **Single executable** combining all functionality
-- **Dual interface**: Both GUI and CLI modes
-- **Integrated data processing** for Excel files
-- **Professional business interface** without emojis
+### 🗂️ Multi-Format Support
+- **Excel Files**: `.xlsx`, `.xls` (supports multiple sheets)
+- **CSV Files**: `.csv` (multiple encoding support)
+- **Batch Processing**: Process multiple files simultaneously
+- **Data Standardization**: Automatic column mapping and standardization
 
-### [INFO] Advanced Search & Filtering
-- **Real-time search** across tool names and descriptions
-- **Category filtering** by tool type
-- **Access level filtering** (Internal/Public tools)
-- **Combined filters** for precise results
+### 🔗 Link Validation
+- **Concurrent Validation**: Fast multi-threaded link checking
+- **Comprehensive Status**: Valid, Invalid, Timeout, Connection Error
+- **Progress Tracking**: Real-time validation progress
+- **Detailed Reports**: HTTP status codes and error messages
 
-### [INFO] Access Control
-- **Internal Tools**: Company-only tools and resources
-- **Public Tools**: Publicly accessible tools
-- **Automatic classification** based on URL and content analysis
+### 📊 Data Management
+- **Master CSV**: Combined data from all sources in `data/Master_Tools.csv`
+- **Duplicate Removal**: Automatic deduplication based on URLs
+- **Source Tracking**: Track which file each entry came from
+- **Access Classification**: Automatic Internal/Public classification
 
-### [INFO] Data Management
-- **Excel file import** with automatic processing
-- **CSV export** of cleaned data
-- **URL validation** to ensure accessibility
-- **Enhanced descriptions** and categorization
+### 🖥️ User Interfaces
+- **GUI Mode**: Full-featured graphical interface with tabs
+- **CLI Mode**: Command-line processing for automation
+- **Data Browser**: Search, filter, and browse all tools
+- **Validation Dashboard**: Link status overview and statistics
 
 ## Installation
 
-### System Requirements
-- **RHEL 9** (Red Hat Enterprise Linux 9)
-- **Python 3.6+** with tkinter support
-- **Internet connection** for URL validation
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/yourusername/BusinessToolsBrowser.git
+   cd BusinessToolsBrowser
+   ```
 
-### Quick Install (Recommended)
-```bash
-# Make installer executable
-chmod +x install.sh
+2. **Install dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-# Run installer (requires sudo)
-sudo ./install.sh
-```
+3. **Setup the application**:
+   ```bash
+   ./setup.sh
+   ```
 
-### Manual Setup (Development)
-```bash
-# Setup for local development
-chmod +x setup.sh
-./setup.sh
-
-# Install Python dependencies
-pip3 install -r requirements.txt
-
-# Run locally
-python3 business_tools.py
-```
+4. **Optional system-wide installation**:
+   ```bash
+   sudo ./install.sh
+   ```
 
 ## Usage
 
-### GUI Mode (Default)
-Start the graphical interface:
+### GUI Mode (Recommended)
 ```bash
-business-tools
+python3 business_tools.py
 ```
-Or from the Applications menu: **Office > Business Tools Browser**
 
-#### GUI Features:
-- **Search bar**: Type keywords to search tool names and descriptions
-- **Category dropdown**: Filter by tool category (Security, Education, etc.)
-- **Access filter**: Show only Internal, Public, or All tools
-- **Double-click**: Open tool URL in web browser
-- **Load File button**: Import new Excel files
-- **Real-time filtering**: Results update as you type
+The GUI provides three main tabs:
+
+#### 📁 File Processing Tab
+- Select multiple XLS/XLSX/CSV files
+- Process them with real-time progress
+- Automatic data standardization and validation
+
+#### 🔍 Data Browser Tab  
+- Browse all processed tools
+- Search and filter functionality
+- Double-click URLs to open in browser
+
+#### ✅ Link Validation Tab
+- Validation statistics and status overview
+- Re-validate links as needed
+- Export validation reports
 
 ### CLI Mode
-Start the command-line interface:
 ```bash
-business-tools --cli
+# Process multiple files
+python3 business_tools.py --cli --process file1.xlsx file2.csv file3.xls
+
+# Validate existing links
+python3 business_tools.py --cli --validate
+
+# Show help
+python3 business_tools.py --help
 ```
 
-#### CLI Features:
-- **Browse all tools**: View complete tool list
-- **Search functionality**: Enter keywords to find tools
-- **Category browsing**: Browse tools by category
-- **Access level browsing**: Browse Internal or Public tools
-- **File processing**: Load new Excel files
-- **Statistics**: View data summaries
+## File Format Requirements
 
-### Data Processing Only
-Process an Excel file without starting the interface:
+The tool automatically maps common column variations to standard fields:
+
+### Supported Column Names (case-insensitive):
+
+| Standard Field | Accepted Variations |
+|----------------|-------------------|
+| **name** | name, tool_name, tool, title, application, service |
+| **description** | description, desc, summary, overview, about |
+| **url** | url, link, website, web_address, site |
+| **category** | category, type, classification, group |
+| **access** | access, availability, access_type, public, internal |
+| **notes** | notes, comments, remarks, additional_info |
+
+### Example Excel/CSV Structure:
+```
+Tool Name          | Description           | Website URL        | Category
+Business Tool 1    | Project management   | https://tool1.com  | Management
+Internal Tool      | Company intranet     | http://internal... | Internal
+```
+
+## Output Files
+
+### `data/Master_Tools.csv`
+Combined and standardized data from all processed files with:
+- Standardized column names
+- Link validation status
+- Source file tracking
+- Access classification
+- Processing timestamps
+
+### `data/Link_Validation_Report.csv`  
+Detailed link validation results with:
+- URL status (valid, invalid, timeout, etc.)
+- HTTP response codes
+- Error messages
+- Last validation timestamp
+
+## Link Validation Status
+
+| Status | Description |
+|--------|-------------|
+| **valid** | Link is accessible (HTTP 2xx/3xx) |
+| **error** | HTTP error (4xx/5xx response) |
+| **timeout** | Request timed out |
+| **connection_error** | Unable to connect |
+| **invalid** | Malformed URL |
+| **empty** | No URL provided |
+
+## Access Classification
+
+The tool automatically classifies tools as:
+
+- **Internal**: Contains keywords like 'internal', 'intranet', 'corp', private IPs
+- **Public**: External services, public domains
+- **Unknown**: Cannot determine access type
+
+## Advanced Features
+
+### Batch Processing
+Process multiple files at once with progress tracking:
 ```bash
-business-tools --process /path/to/file.xlsx
+python3 business_tools.py --process *.xlsx *.csv
 ```
 
-## File Structure
-
-```
-/opt/BusinessToolsBrowser/
- business_tools.py # Main launcher
- src/
- business_tools_app.py # Unified application code
- data/ # Data files
- Cleaned_Tools.csv # Processed tool data
- Tools_Summary.csv # Category summaries
- *.xlsx # Original Excel files
- resources/ # Application resources
- business-tools-browser.desktop
- business_tools.png # Application icon
- requirements.txt # Python dependencies
- uninstall.sh # Uninstaller script
- README.md # This file
+### Link Re-validation
+Update link status for existing data:
+```bash
+python3 business_tools.py --validate
 ```
 
-## Data Format
+### Data Filtering
+GUI provides real-time filtering by:
+- Tool name
+- Description
+- Category
+- URL
 
-The application expects Excel files with these columns:
-- **Name**: Tool name
-- **URL**: Tool website/link
-- **Synopsis/Description**: Tool description
-- **Tool_Type/Category**: Tool category
+### Export Options
+- Master CSV for all tools
+- Validation reports
+- Filtered data sets
 
-Alternative column names are automatically mapped:
-- `Url`, `Link`, `Links` → `URL`
-- `Tool_Name`, `Title` → `Name`
-- `Description` → `Synopsis`
-- `Type`, `Category` → `Tool_Type`
+## Configuration
 
-## Access Level Classification
+### Link Validation Settings
+Edit `src/business_tools_app.py` to adjust:
+- `timeout`: Request timeout (default: 10 seconds)
+- `max_workers`: Concurrent validation threads (default: 20)
 
-Tools are automatically classified as:
-
-### Internal Tools
-- URLs containing: `redhat.com`, `internal`, `intranet`, `corp`
-- Descriptions mentioning: `employee`, `staff`, `private`, `restricted`
-
-### Public Tools
-- All other tools not matching internal criteria
-- Publicly accessible websites and services
-
-## Categories
-
-Tools are automatically categorized into:
-- **Security**: Authentication, identity, tokens
-- **Education**: Learning, labs, training materials
-- **Diagramming**: Flowcharts, architecture diagrams
-- **Media Tools**: Video, streaming, recording utilities
-- **Code Repositories**: Git, source control
-- **Meetings**: Conference, collaboration tools
-- **Automation**: Ansible, workflow tools
-- **CLI Utilities**: Terminal, command-line tools
-- **General Utilities**: Other business tools
+### Column Mapping
+Customize column mappings in the `column_mappings` dictionary for your specific data format.
 
 ## Troubleshooting
 
-### Installation Issues
-```bash
-# Check Python installation
-python3 --version
+### Common Issues
 
-# Install missing dependencies
-sudo dnf install python3 python3-pip python3-tkinter
+1. **Import Errors**: Install missing dependencies with `pip install -r requirements.txt`
 
-# Install Python packages
-pip3 install pandas requests openpyxl
-```
+2. **File Encoding Issues**: The tool tries multiple encodings automatically
 
-### GUI Won't Start
-```bash
-# Check if tkinter is available
-python3 -c "import tkinter; print('GUI available')"
+3. **Excel Sheet Selection**: Multiple sheets are automatically combined
 
-# If failed, install tkinter
-sudo dnf install python3-tkinter
-```
+4. **Memory Usage**: For large files, consider processing in smaller batches
 
-### Permission Errors
-```bash
-# Fix permissions
-sudo chown -R root:root /opt/BusinessToolsBrowser
-sudo chmod -R 755 /opt/BusinessToolsBrowser
-```
+### Error Messages
 
-### Data Processing Errors
-- Ensure Excel file has required columns (Name, URL, Synopsis)
-- Check file permissions and accessibility
-- Verify internet connection for URL validation
+- **"File not found"**: Check file path and permissions
+- **"Unsupported format"**: Only XLS/XLSX/CSV files supported  
+- **"Failed to read file"**: Check file corruption or format
 
-## Uninstallation
+## API Reference
 
-To completely remove the application:
-```bash
-sudo /opt/BusinessToolsBrowser/uninstall.sh
-```
+### DataProcessor Class
+- `process_files(file_paths, progress_callback)`: Process multiple files
+- `validate_links_with_progress(df, progress_callback)`: Validate URLs
+- `standardize_columns(df)`: Standardize column names
 
-This removes:
-- Application files from `/opt/BusinessToolsBrowser/`
-- Desktop menu entry
-- Command-line launcher from `/usr/local/bin/`
+### LinkValidator Class  
+- `validate_url(url)`: Validate single URL
+- `validate_urls_batch(urls, progress_callback)`: Batch validation
 
-## Development
+## Contributing
 
-### File Organization
-- **src/business_tools_app.py**: Main application with all classes
-- **business_tools.py**: Simple launcher script
-- **install.sh**: Complete installer for RHEL 9
-- **setup.sh**: Development setup script
-
-### Key Classes
-- **DataProcessor**: Handles Excel processing and data cleaning
-- **BusinessToolsGUI**: Tkinter-based graphical interface
-- **BusinessToolsCLI**: Command-line interface
-
-### Adding Features
-The unified application design makes it easy to:
-- Add new data sources
-- Extend search functionality
-- Add new categorization rules
-- Customize the interface
-
-## Support
-
-For issues, questions, or feature requests:
-1. Check the troubleshooting section above
-2. Verify system requirements are met
-3. Contact your system administrator
-4. Check application logs in `/opt/BusinessToolsBrowser/data/`
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
 
 ## License
 
-This application is designed for internal business use. Please ensure compliance with your organization's software policies.
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Support
+
+For issues, questions, or contributions:
+- Open an issue on GitHub
+- Check the troubleshooting section
+- Review the example files in the `data/` directory

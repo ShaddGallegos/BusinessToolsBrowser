@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Simple launcher script for Business Tools Browser
+Enhanced Business Tools Browser Launcher
+Supports multiple file formats, link validation, and master CSV creation
 """
 import os
 import sys
