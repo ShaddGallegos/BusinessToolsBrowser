@@ -1,9 +1,0 @@
-[Desktop Entry]
-Version=1.0
-Type=Application
-Name=Business Tools Browser
-Comment=Browse and search business tools database
-Exec=/opt/BusinessToolsBrowser/business_tools.py
-Icon=/opt/BusinessToolsBrowser/resources/business_tools.png
-Terminal=false
-Categories=Office;Database;Utility;

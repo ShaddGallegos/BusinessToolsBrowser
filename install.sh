@@ -16,12 +16,12 @@ COMPANY_DOMAIN="${COMPANY_DOMAIN:-example.com}"
 
 set -e
 
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+# Colors for output (removed special color codes)
+RED=''
+GREEN=''
+YELLOW=''
+BLUE=''
+NC=''
 
 # Configuration
 APP_NAME="Business Tools Browser"
@@ -31,45 +31,97 @@ MENU_DIR="/usr/share/applications"
 ICON_DIR="/usr/share/pixmaps"
 BIN_DIR="/usr/local/bin"
 
-echo
-echo
-echo
-echo
 
-# Check if running as root
-if [[ $EUID -ne 0 ]]; then
- echo
- exit 1
+# Consolidated setup logic from setup.sh (should run before root check)
+if [[ "$1" == "--setup" ]]; then
+    echo "Setting up Business Tools Browser..."
+    chmod +x install.sh
+    chmod +x business_tools.py
+    chmod +x src/business_tools_app.py
+    # Copy any existing data files
+    if compgen -G "../python/*.xlsx" > /dev/null; then
+        echo "Copying existing Excel data file(s)..."
+        cp ../python/*.xlsx data/ 2>/dev/null || true
+    fi
+    if [ -f "../python/Cleaned_Tools.csv" ]; then
+        echo "Copying existing cleaned data..."
+        cp ../python/Cleaned_Tools.csv data/
+    fi
+    echo "Setup complete!"
+    echo ""
+    echo "To install system-wide (requires sudo):"
+    echo " sudo ./install.sh"
+    echo ""
+    echo "To run locally without installing:"
+    echo " python3 business_tools.py"
+    echo " python3 business_tools.py --cli"
+    exit 0
 fi
 
-# Check RHEL version
-if ! grep -q "${COMPANY_NAME} Enterprise Linux.*9" /etc/${COMPANY_NAME}-release 2>/dev/null; then
- echo
- echo
- echo
+echo
+echo
+echo
+echo
+
+# Check if running as root (only for full install)
+if [[ $EUID -ne 0 ]]; then
+    echo "This installer must be run as root for system-wide installation."
+    echo "For local setup, run: ./install.sh --setup"
+    exit 1
+fi
+
+# Check RHEL version (use /etc/redhat-release for standard RHEL detection)
+if [ -f /etc/redhat-release ]; then
+    if ! grep -q "Red Hat Enterprise Linux.* 9" /etc/redhat-release; then
+        echo "[WARNING] This script is intended for RHEL 9."
+    fi
 fi
 
 # Function to print status
 print_status() {
- echo -e "${GREEN}[INFO]${NC} $1"
+ echo "[INFO] $1"
 }
 
 print_error() {
- echo -e "${RED}[ERROR]${NC} $1"
+ echo "[ERROR] $1"
 }
 
 print_warning() {
- echo -e "${YELLOW}[WARNING]${NC} $1"
+ echo "[WARNING] $1"
 }
 
 # Check if Python 3 is installed
 print_status "Checking Python 3 installation..."
 if ! command -v python3 &> /dev/null; then
- print_error "Python 3 is not installed"
- echo "Installing Python 3..."
- dnf install -y python3 python3-pip python3-tkinter
-else
- print_status "Python 3 is installed"
+    print_error "Python 3 is not installed"
+    echo "Installing Python 3..."
+    dnf install -y python3 python3-pip python3-tkinter
+fi
+
+# Consolidated setup logic from setup.sh
+if [[ "$1" == "--setup" ]]; then
+    echo "Setting up Business Tools Browser..."
+    chmod +x install.sh
+    chmod +x business_tools.py
+    chmod +x src/business_tools_app.py
+    # Copy any existing data files
+    if compgen -G "../python/*.xlsx" > /dev/null; then
+        echo "Copying existing Excel data file(s)..."
+        cp ../python/*.xlsx data/ 2>/dev/null || true
+    fi
+    if [ -f "../python/Cleaned_Tools.csv" ]; then
+        echo "Copying existing cleaned data..."
+        cp ../python/Cleaned_Tools.csv data/
+    fi
+    echo "Setup complete!"
+    echo ""
+    echo "To install system-wide (requires sudo):"
+    echo " sudo ./install.sh"
+    echo ""
+    echo "To run locally without installing:"
+    echo " python3 business_tools.py"
+    echo " python3 business_tools.py --cli"
+    exit 0
 fi
 
 # Check and install required Python packages
@@ -252,17 +304,17 @@ echo
 echo
 echo
 echo
-echo -e "Application installed to: ${BLUE}$INSTALL_DIR${NC}"
-echo -e "Menu entry added to: ${BLUE}Applications > Office${NC}"
-echo -e "Command line access: ${BLUE}business-tools${NC}"
-echo -e "Documentation: ${BLUE}$INSTALL_DIR/README.md${NC}"
+echo "Application installed to: $INSTALL_DIR"
+echo "Menu entry added to: Applications > Office"
+echo "Command line access: business-tools"
+echo "Documentation: $INSTALL_DIR/README.md"
 echo
 echo
-echo -e " • Use the Applications menu (Office > Business Tools Browser)"
-echo -e " • Or run: ${BLUE}business-tools${NC}"
-echo -e " • For CLI mode: ${BLUE}business-tools --cli${NC}"
+echo "Use the Applications menu (Office > Business Tools Browser)"
+echo "Or run: business-tools"
+echo "For CLI mode: business-tools --cli"
 echo
 echo
-echo -e " • Run: ${BLUE}sudo $INSTALL_DIR/uninstall.sh${NC}"
+echo "Run: sudo $INSTALL_DIR/uninstall.sh"
 echo
 print_status "You can now close this terminal and start using Business Tools Browser!"
